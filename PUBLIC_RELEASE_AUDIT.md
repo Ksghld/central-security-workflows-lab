@@ -20,8 +20,9 @@ A content PASS is not authentication, publication authorization, or remote enfor
   and do not prove GitHub execution. New commits use generic non-deliverable lab attribution.
 - No remotes configured. No original source history is reachable in either repository.
   Virtual environments, caches and generated reports are ignored and excluded.
-- Public repository names are authorized lab destinations. Registry identity 10001,
-  resource account 000000000000, hashes, owners and deployment records are synthetic.
+- Public repository names and the application registry's GitHub repository ID are
+  authorized lab identifiers. Resource account 000000000000, hashes, owners and
+  deployment records remain synthetic.
 - Private administrator request and execution-context findings remain outside both repositories.
 - No new credentials, hosted secrets, self-hosted runners, or authorization changes.
 

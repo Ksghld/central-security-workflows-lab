@@ -20,9 +20,9 @@ def sample(tmp_path):
     return tmp_path, policy, app
 
 
-def run(sample, mode="enforce", application_id="APP-00427", repository="synthetic/secure-code-controls-lab"):
+def run(sample, mode="enforce", application_id="APP-00427", repository="Ksghld/secure-code-controls-lab"):
     root, policy, _ = sample
-    return validator.validate(root, policy, application_id, repository, "10001", mode)
+    return validator.validate(root, policy, application_id, repository, "1444026417", mode)
 
 
 def test_clean(sample):

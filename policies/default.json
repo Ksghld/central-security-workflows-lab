@@ -4,8 +4,8 @@
   "required_engines": ["sca", "sast", "secrets", "iac"],
   "applications": {
     "APP-00427": {
-      "repository": "synthetic/secure-code-controls-lab",
-      "repository_id": "10001",
+      "repository": "Ksghld/secure-code-controls-lab",
+      "repository_id": "1444026417",
       "service_id": "sample-api",
       "technical_owner": "platform-team",
       "environment": "production",

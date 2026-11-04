@@ -23,8 +23,8 @@ evaluates sanitized offline repository/workflow/Ruleset/check-run records. Missi
 evidence is UNKNOWN. No private organization inventory is collected.
 
 Ownership uses application.json in the target and the centrally approved registry.
-The bundled repository ID is synthetic. Real public lab identity binding is an
-administrator-reviewed central change, not a reason to disable validation.
+The registry is bound to the public lab repository name and immutable GitHub
+repository ID; a mismatch fails closed.
 
 Publication uses the established controlled GitOps process after audit approval.
 Repository creation, installation scope, and Rulesets are administrator actions.
