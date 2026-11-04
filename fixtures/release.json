@@ -1,0 +1,10 @@
+{
+  "application_id": "APP-00427",
+  "repository_id": "10001",
+  "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "build_id": "synthetic-build-1",
+  "artifact_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "deployment_id": "synthetic-deployment-1",
+  "cloud_resource_id": "arn:aws:ecs:us-east-1:000000000000:service/synthetic/sample-api",
+  "runtime_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+}

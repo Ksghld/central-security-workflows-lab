@@ -1,0 +1,11 @@
+{
+  "repository_identity": true,
+  "push_trigger": true,
+  "pr_trigger": true,
+  "effective_ruleset": null,
+  "required_check": null,
+  "expected_source": null,
+  "latest_scan": null,
+  "release_branches": null,
+  "ownership": true
+}

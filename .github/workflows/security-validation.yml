@@ -1,0 +1,61 @@
+name: Central Security Validation
+on:
+  workflow_call:
+    inputs:
+      scan_mode:
+        type: string
+        required: true
+      application_id:
+        type: string
+        required: true
+      policy_profile:
+        type: string
+        default: default
+      verify_release:
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  security-validation:
+    name: security-validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout untrusted target as data
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: target
+          persist-credentials: false
+      - name: Checkout trusted controls
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Ksghld/central-security-workflows-lab
+          ref: 5bd17652c8cc54ef9763ea9a9967620c0243c3b3
+          path: controls
+          persist-credentials: false
+      - name: Validate central policy and target
+        env:
+          SCAN_MODE: ${{ inputs.scan_mode }}
+          APPLICATION_ID: ${{ inputs.application_id }}
+          POLICY_PROFILE: ${{ inputs.policy_profile }}
+          TARGET_REPOSITORY: ${{ github.repository }}
+          TARGET_REPOSITORY_ID: ${{ github.repository_id }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          mkdir -p evidence
+          export APPSEC_TESTED_SHA="$(git -C target rev-parse HEAD)"
+          test "$POLICY_PROFILE" = default
+          python3 -I controls/scripts/validate.py --target target --policy controls/policies/default.json --application-id "$APPLICATION_ID" --repository "$TARGET_REPOSITORY" --repository-id "$TARGET_REPOSITORY_ID" --mode "$SCAN_MODE" --output evidence/scan.json
+      - name: Verify actual checkout and synthetic release correlation
+        if: ${{ inputs.verify_release }}
+        run: |
+          python3 -I controls/scripts/release.py --target target --expected controls/fixtures/release.json --tested-sha "$(git -C target rev-parse HEAD)" --validation-sha "$GITHUB_SHA" --output evidence/release.json
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: security-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/*.json
+          if-no-files-found: error
+          retention-days: 7

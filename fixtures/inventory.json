@@ -1,0 +1,18 @@
+{
+  "application_id": "APP-00427",
+  "repository": {"name": "synthetic/secure-code-controls-lab", "id": "10001"},
+  "workflows": [
+    {"on": {"push": null}},
+    {"on": {"pull_request": {"types": ["opened", "synchronize", "reopened", "ready_for_review"]}}}
+  ],
+  "release_branches": ["main"],
+  "metadata": {
+    "application_id": "APP-00427",
+    "repository": "synthetic/secure-code-controls-lab",
+    "repository_id": "10001",
+    "service_id": "sample-api",
+    "technical_owner": "platform-team",
+    "environment": "production",
+    "criticality": "high"
+  }
+}
