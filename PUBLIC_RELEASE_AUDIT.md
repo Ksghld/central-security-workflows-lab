@@ -26,8 +26,9 @@ A content PASS is not authentication, publication authorization, or remote enfor
 - No new credentials, hosted secrets, self-hosted runners, or authorization changes.
 
 ## Immutable dependency review
-Caller workflow revision: c9dd51e653e7de8b424503b4a43fe438b7f7f42e.
-Central scanner/policy revision: 5bd17652c8cc54ef9763ea9a9967620c0243c3b3.
+The published reusable-workflow revision is recorded after GitHub creates the
+final commit and is verified through the remote Git API.
+Central scanner/policy revision: 262ebcae3eb2ab544be9d6808bae434f364074ef.
 Local tests compare these pinned files with the tested source, rather than only
 checking that strings look like SHAs. Human approval of revisions remains required.
 Official upstream release pages matched checkout v4.2.2 and upload-artifact v4.6.2

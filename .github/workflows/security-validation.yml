@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: Ksghld/central-security-workflows-lab
-          ref: 5bd17652c8cc54ef9763ea9a9967620c0243c3b3
+          ref: 262ebcae3eb2ab544be9d6808bae434f364074ef
           path: controls
           persist-credentials: false
       - name: Validate central policy and target
