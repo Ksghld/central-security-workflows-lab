@@ -29,7 +29,7 @@ A content PASS is not authentication, publication authorization, or remote enfor
 ## Immutable dependency review
 The published reusable-workflow revision is recorded after GitHub creates the
 final commit and is verified through the remote Git API.
-Central scanner/policy revision: 262ebcae3eb2ab544be9d6808bae434f364074ef.
+Central scanner/policy revision: 76ce1e187c6e01e4cc30eaad75f26fd25f4dc774.
 Local tests compare these pinned files with the tested source, rather than only
 checking that strings look like SHAs. Human approval of revisions remains required.
 Official upstream release pages matched checkout v4.2.2 and upload-artifact v4.6.2
