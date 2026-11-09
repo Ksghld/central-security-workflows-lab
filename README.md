@@ -43,6 +43,7 @@ The additional `release-build.yml` packages synthetic text as data and attests
 the actual file plus its Artifact ID receipt. `release-verify.yml` independently
 verifies the pinned signer, source, run/attempt and actual bytes before a local
 synthetic copy. It cannot sign, deploy to cloud, or execute application code.
-These workflows are locally tested but not published or demonstrated in GitHub.
+The implementation is under review; release-chain execution has not yet been
+demonstrated in GitHub.
 See [release evidence](docs/RELEASE_EVIDENCE.md) for trust boundaries and the live
 passing/failing acceptance matrix. Existing P0 scanner pins remain unchanged.
