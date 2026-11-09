@@ -174,6 +174,39 @@ def test_crypto_unavailable_never_deploys(live_stub, monkeypatch):
     assert not (live_stub / "synthetic-deployment").exists()
 
 
+@pytest.mark.parametrize("field,value", [("source_sha", CONTROLS), ("artifact_id", 999),
+    ("run_id", 999), ("run_attempt", 99), ("sha256", "0" * 64), ("repository", "synthetic/other")])
+def test_signed_receipt_must_match_all_expected_identities(tmp_path, field, value):
+    file, receipt_file = tmp_path / "release.zip", tmp_path / "receipt.json"
+    file.write_bytes(b"synthetic")
+    gate.record(file, receipt_file, SHA, 456, RUN, ATTEMPT)
+    receipt = json.loads(receipt_file.read_text())
+    receipt[field] = value
+    with pytest.raises(gate.GateError, match="RECEIPT_"):
+        gate.validate_receipt(receipt, file, SHA, 456, RUN, ATTEMPT)
+
+
+def test_main_moving_before_copy_denies_deployment(live_stub, monkeypatch):
+    previous = gate.api
+    def api(repo, path):
+        return {"object": {"sha": CONTROLS}} if path == "git/ref/heads/main" else previous(repo, path)
+    monkeypatch.setattr(gate, "api", api)
+    with pytest.raises(gate.GateError, match="MAIN_MOVED_BEFORE_DEPLOY"):
+        gate.verify_release(RUN, CONTROLS, live_stub)
+    assert not (live_stub / "synthetic-deployment").exists()
+
+
+def test_current_main_without_merged_independent_approval_denied(monkeypatch):
+    def api(repo, path):
+        if path == "git/ref/heads/main":
+            return {"object": {"sha": SHA}}
+        assert path == f"commits/{SHA}/pulls?per_page=100"
+        return []
+    monkeypatch.setattr(gate, "api", api)
+    with pytest.raises(gate.GateError, match="INDEPENDENT_MERGED_APPROVAL_REQUIRED"):
+        gate.approved_source(SHA)
+
+
 def test_build_packages_only_data_and_is_deterministic(tmp_path, monkeypatch):
     source = tmp_path / "source"
     (source / "src").mkdir(parents=True)
