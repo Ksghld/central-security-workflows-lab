@@ -1,0 +1,76 @@
+name: trusted-synthetic-release-build
+on:
+  workflow_call:
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+  id-token: write
+  attestations: write
+jobs:
+  build:
+    name: trusted-release-build
+    if: >-
+      github.repository == 'Ksghld/secure-code-controls-lab' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'workflow_run' &&
+        github.event.workflow_run.name == 'appsec-release-verify' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_sha == github.sha &&
+        github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_PROMPT_DISABLED: '1'
+      CONTROLS_SHA: 77d842f5bf5c54bd9d00dbb4a991c232e85e874d
+    steps:
+      - name: Checkout immutable central implementation
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Ksghld/central-security-workflows-lab
+          ref: 77d842f5bf5c54bd9d00dbb4a991c232e85e874d
+          path: controls
+          persist-credentials: false
+      - name: Require protected approved main and exact post-merge validation
+        run: python3 controls/scripts/release_chain.py preflight --controls-sha "$CONTROLS_SHA"
+      - name: Checkout approved source as data only
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          path: source
+          persist-credentials: false
+      - name: Package synthetic text without executing application code
+        run: python3 controls/scripts/release_chain.py build --target source --output out/release.zip
+      - name: Upload actual release file
+        id: release
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/release.zip
+          if-no-files-found: error
+          retention-days: 7
+      - name: Bind actual release bytes to the artifact and build invocation
+        env:
+          ARTIFACT_ID: ${{ steps.release.outputs.artifact-id }}
+        run: >-
+          python3 controls/scripts/release_chain.py record
+          --file out/release.zip --output out/release-record.json
+          --artifact-id "$ARTIFACT_ID"
+      - name: Attest release file and artifact receipt with GitHub OIDC
+        id: attest
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
+        with:
+          subject-path: |
+            out/release.zip
+            out/release-record.json
+          create-storage-record: false
+          push-to-registry: false
+      - name: Upload signed receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: receipt-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/release-record.json
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,25 @@
+name: Central Controls Tests
+on:
+  pull_request:
+  push:
+permissions:
+  contents: read
+jobs:
+  central-controls-tests:
+    name: central-controls-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout proposed central controls
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Create isolated test environment
+        run: |
+          python3 -m venv "$RUNNER_TEMP/central-tests"
+          "$RUNNER_TEMP/central-tests/bin/python" -m pip install --disable-pip-version-check -r requirements-test.txt
+      - name: Compile and test synthetic controls
+        run: |
+          "$RUNNER_TEMP/central-tests/bin/python" -m compileall -q scripts tests
+          "$RUNNER_TEMP/central-tests/bin/python" -m pytest -q tests
