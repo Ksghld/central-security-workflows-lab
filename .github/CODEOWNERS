@@ -1,0 +1,9 @@
+# Public GitHub handle only. The base branch version controls review requests.
+* @kfise
+/.github/workflows/ @kfise
+/.github/CODEOWNERS @kfise
+/scripts/ @kfise
+/policies/ @kfise
+/fixtures/ @kfise
+/tests/ @kfise
+/requirements-test.txt @kfise

@@ -26,6 +26,13 @@ Ownership uses application.json in the target and the centrally approved registr
 The registry is bound to the public lab repository name and immutable GitHub
 repository ID; a mismatch fails closed.
 
-Publication uses the established controlled GitOps process after audit approval.
-Repository creation, installation scope, and Rulesets are administrator actions.
-The execution agent uses approved feature worktrees and human-reviewed draft PRs.
+This repository is public and its immutable workflow runs from the application
+repository. The application's P0_REMOTE_VALIDATION.md records observed evidence.
+Publication uses approved feature branches and ready-for-review PRs; approvals and
+merges remain human actions. No credentials or unrelated runtime changes are involved.
+
+Central-main governance is proposed in docs/governance/README.md. The new read-only
+Central Controls Tests workflow tests proposed central changes on GitHub-hosted
+runners, without secrets, deployment or application code execution. Its exact check
+must be observed in GitHub before it becomes required. Do not change existing
+application workflow or scanner pins as part of this governance-only update.
