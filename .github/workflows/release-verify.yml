@@ -1,0 +1,55 @@
+name: independent-synthetic-release-gate
+on:
+  workflow_call:
+    inputs:
+      build_run_id:
+        required: true
+        type: string
+      failure_case:
+        required: false
+        type: string
+        default: none
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+  attestations: read
+jobs:
+  verify:
+    name: independent-release-gate
+    if: >-
+      github.repository == 'Ksghld/secure-code-controls-lab' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'workflow_run' &&
+        github.event.workflow_run.name == 'lab-release-build' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_PROMPT_DISABLED: '1'
+      BUILD_RUN_ID: ${{ inputs.build_run_id }}
+      FAILURE_CASE: ${{ inputs.failure_case }}
+      SIGNER_SHA: a8dc27d203ea9fbdbb7f3423cf76f82146d9aa95
+    steps:
+      - name: Checkout immutable verifier only
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Ksghld/central-security-workflows-lab
+          ref: 77d842f5bf5c54bd9d00dbb4a991c232e85e874d
+          path: controls
+          persist-credentials: false
+      - name: Verify exact artifact and signed receipt before synthetic deployment
+        run: >-
+          python3 controls/scripts/release_chain.py verify
+          --run-id "$BUILD_RUN_ID" --controls-sha "$SIGNER_SHA"
+          --output "$RUNNER_TEMP/release-verification" --fault "$FAILURE_CASE"
+      - name: Preserve verified release correlation
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: verified-release-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-verification/verification-summary.json
+          if-no-files-found: error
+          retention-days: 7
