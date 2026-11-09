@@ -73,3 +73,8 @@ code-to-cloud reconciliation remain future work.
 
 References: [GitHub artifact attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations),
 [GitHub CLI verification](https://cli.github.com/manual/gh_attestation_verify).
+
+Local validation snapshot, 2026-11-09: 87 central tests passed, including workflow
+permissions/pins, signed-receipt correlation, missing evidence, tampering, exact
+run attempt and main-movement rejection. Python compilation passed. Fixtures mock
+GitHub and cryptographic command outcomes; they do not verify a live signature.

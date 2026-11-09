@@ -2,8 +2,8 @@
 
 This central repository contains synthetic security policy, application ownership
 validation, offline inventory evaluation, and code-to-cloud correlation exercises.
-It uses GitHub-hosted ubuntu-latest jobs only. It never builds or deploys an
-application and never executes application-controlled scripts or dependencies.
+It uses GitHub-hosted ubuntu-latest jobs only. The P0 validator does not build or
+deploy an application and never executes application-controlled scripts or dependencies.
 
 The reusable workflow is `.github/workflows/security-validation.yml`. Application
 callers pin it to an immutable revision; the workflow separately pins the trusted
@@ -36,3 +36,13 @@ Central Controls Tests workflow tests proposed central changes on GitHub-hosted
 runners, without secrets, deployment or application code execution. Its exact check
 must be observed in GitHub before it becomes required. Do not change existing
 application workflow or scanner pins as part of this governance-only update.
+
+## Prepared release-evidence extension
+
+The additional `release-build.yml` packages synthetic text as data and attests
+the actual file plus its Artifact ID receipt. `release-verify.yml` independently
+verifies the pinned signer, source, run/attempt and actual bytes before a local
+synthetic copy. It cannot sign, deploy to cloud, or execute application code.
+These workflows are locally tested but not published or demonstrated in GitHub.
+See [release evidence](docs/RELEASE_EVIDENCE.md) for trust boundaries and the live
+passing/failing acceptance matrix. Existing P0 scanner pins remain unchanged.
